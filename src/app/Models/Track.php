@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Track extends Model
 {
-    //
+    protected $fillable = ['name', 'city', 'size_meters'];
 }
