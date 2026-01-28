@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\PilotCreateRequest;
+use App\Http\Requests\V1\PilotStoreRequest;
 use App\Http\Requests\V1\PilotUpdateRequest;
 use App\Services\PilotService;
 use App\Http\Resources\V1\PilotResource;
@@ -16,9 +16,6 @@ class PilotController extends Controller
         protected PilotService $service
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $perPage = min((int) $request->input('per_page', 10), 20);
@@ -27,21 +24,20 @@ class PilotController extends Controller
         return PilotResource::collection($pilots);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(PilotCreateRequest $request)
+    public function store(PilotStoreRequest $request)
     {
         $validated = $request->validated();
 
         $pilot = $this->service->create($validated);
 
+        return (new PilotResource($pilot))->response()->setStatusCode(201);
+    }
+
+    public function show(Pilot $pilot)
+    {
         return new PilotResource($pilot);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Pilot $pilot, PilotUpdateRequest $request)
     {
         $validated = $request->validated();
@@ -51,9 +47,6 @@ class PilotController extends Controller
         return new PilotResource($pilot);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Pilot $pilot)
     {
         $this->service->destroy($pilot);
